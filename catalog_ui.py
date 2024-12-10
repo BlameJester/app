@@ -50,3 +50,25 @@ class ProductUI:
         
         add_button = tk.Button(button_frame, text="Добавить продукт", command=self.add_product)
         add_button.pack(side=tk.LEFT, padx=5)
+        
+    def add_product(self):
+        name = self.name_entry.get()
+        price = self.price_entry.get()
+        description = self.desc_entry.get()
+
+        if name and price and description:
+            try:
+                price = float(price)
+                product = Product(name, price, description)
+                self.catalog.add_product(product)
+
+                # Очищаем поля ввода после добавления
+                self.name_entry.delete(0, tk.END)
+                self.price_entry.delete(0, tk.END)
+                self.desc_entry.delete(0, tk.END)
+
+                messagebox.showinfo("Успех", "Продукт добавлен!")
+            except ValueError:
+                messagebox.showwarning("Ошибка", "Цена должна быть числом!")
+        else:
+            messagebox.showwarning("Ошибка", "Заполните все поля!")
