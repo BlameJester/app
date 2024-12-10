@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter import messagebox, ttk
+
 class Product:
     def __init__(self, name, price, description):
         self.name = name
@@ -13,12 +16,37 @@ class ProductCatalog:
 
     def get_all_products(self):
         return self.products
+    
+class ProductUI:
+    def __init__(self, master):
+        self.master = master
+        self.catalog = ProductCatalog()
+        self.create_widgets()
 
-if __name__ == "__main__":
-    # Проверка работы класса Product
-    catalog = ProductCatalog()
-    product1 = Product("Товар 1", 10.0, "Описание товара 1")
-    catalog.add_product(product1)
+    def create_widgets(self):
+        # Заголовок
+        title_label = tk.Label(self.master, text="Каталог товаров", font=("Helvetica", 16))
+        title_label.pack(pady=10)
 
-    for prod in catalog.get_all_products():
-        print(f"Название: {prod.name}, Цена: {prod.price}, Описание: {prod.description}")
+        # Поля для ввода данных о продукте
+        entry_frame = tk.Frame(self.master)
+        entry_frame.pack(pady=10)
+
+        self.name_entry = tk.Entry(entry_frame, width=20)
+        self.name_entry.grid(row=0, column=1)
+        tk.Label(entry_frame, text="Название:").grid(row=0, column=0)
+
+        self.price_entry = tk.Entry(entry_frame, width=20)
+        self.price_entry.grid(row=1, column=1)
+        tk.Label(entry_frame, text="Цена:").grid(row=1, column=0)
+
+        self.desc_entry = tk.Entry(entry_frame, width=20)
+        self.desc_entry.grid(row=2, column=1)
+        tk.Label(entry_frame, text="Описание:").grid(row=2, column=0)
+
+        # Кнопки
+        button_frame = tk.Frame(self.master)
+        button_frame.pack(pady=10)
+        
+        add_button = tk.Button(button_frame, text="Добавить продукт", command=self.add_product)
+        add_button.pack(side=tk.LEFT, padx=5)
