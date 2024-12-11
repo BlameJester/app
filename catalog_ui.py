@@ -50,6 +50,9 @@ class ProductUI:
         
         add_button = tk.Button(button_frame, text="Добавить продукт", command=self.add_product)
         add_button.pack(side=tk.LEFT, padx=5)
+
+        delete_button = tk.Button(button_frame,text="Удалить товар", command=self.delete_product)
+        delete_button.pack(side=tk.LEFT, padx=5)
         
     def add_product(self):
         name = self.name_entry.get()
@@ -72,6 +75,16 @@ class ProductUI:
                 messagebox.showwarning("Ошибка", "Цена должна быть числом!")
         else:
             messagebox.showwarning("Ошибка", "Заполните все поля!")
+
+    def delete_product(self):
+        try:
+            selected_item = self.product_list.selection()[0]  # Получаем выбранный элемент
+            self.product_list.delete(selected_item)  # Удаляем из списка
+            index = self.product_list.index(selected_item)  # Получаем индекс выбранного элемента
+            del self.catalog.products[index]  # Удаляем из каталога
+        except IndexError:
+            messagebox.showwarning("Внимание", "Пожалуйста, выберите продукт для удаления.")
+            
 class MainApp:
     def __init__(self):
         self.window = tk. Tk()
