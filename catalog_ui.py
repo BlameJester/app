@@ -84,7 +84,7 @@ class ProductUI:
             del self.catalog.products[index]  # Удаляем из каталога
         except IndexError:
             messagebox.showwarning("Внимание", "Пожалуйста, выберите продукт для удаления.")
-            
+
 class MainApp:
     def __init__(self):
         self.window = tk. Tk()
@@ -114,6 +114,15 @@ class MainApp:
         # Получаем все продукты и добавляем их в таблицу
         for product in self.ui.catalog.get_all_products():
             self.product_list.insert("", "end", values=(product.name, product.price, product.description))
+
+    def delete_product(self):
+        try:
+            selected_item = self.product_list.selection()[0]  # Получаем выбранный элемент
+            self.product_list.delete(selected_item)  # Удаляем из списка
+            index = self.product_list.index(selected_item)  # Получаем индекс выбранного элемента
+            del self.catalog.products[index]  # Удаляем из каталога
+        except IndexError:
+            messagebox.showwarning("Внимание", "Пожалуйста, выберите продукт для удаления.")
 
 __name__ == "__main__"
 main_app = MainApp()
