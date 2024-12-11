@@ -72,3 +72,37 @@ class ProductUI:
                 messagebox.showwarning("Ошибка", "Цена должна быть числом!")
         else:
             messagebox.showwarning("Ошибка", "Заполните все поля!")
+class MainApp:
+    def __init__(self):
+        self.window = tk. Tk()
+        self.window.title("Каталог товаров")
+        self.ui = ProductUI(self.window)
+
+        # Создаем элементы для отображения списка продуктов
+        self.create_product_list()
+
+    def create_product_list(self):
+        # Список продуктов
+        self.product_list = ttk.Treeview(self.window, columns=('Name', 'Price', 'Description'), show='headings')
+        self.product_list.heading('Name', text='Название')
+        self.product_list.heading('Price', text='Цена')
+        self.product_list.heading('Description', text='Описание')
+        self.product_list.pack(pady=10)
+
+        # Кнопка для обновления списка
+        view_button = tk.Button(self.window, text="Просмотреть продукты", command=self.view_product)
+        view_button.pack(pady=10)
+
+    def view_product(self):
+        # Очищаем текущий список
+        for row  in self.product_list.get_children():
+            self.product_list.delete(row)
+
+        # Получаем все продукты и добавляем их в таблицу
+        for product in self.ui.catalog.get_all_products():
+            self.product_list.insert("", "end", values=(product.name, product.price, product.description))
+
+__name__ == "__main__"
+main_app = MainApp()
+main_app.window.mainloop()
+            
