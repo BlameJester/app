@@ -1,11 +1,14 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import ttk, messagebox
 
 class Product:
     def __init__(self, name, price, description):
         self.name = name
         self.price = price
         self.description = description
+    
+    def __str__(self):
+        return f"{self.name} - {self.price}$: {self.description}"
 
 class ProductCatalog:
     def __init__(self):
@@ -16,7 +19,7 @@ class ProductCatalog:
 
     def get_all_products(self):
         return self.products
-    
+
 class ProductUI:
     def __init__(self, master):
         self.master = master
@@ -28,7 +31,7 @@ class ProductUI:
         title_label = tk.Label(self.master, text="Каталог товаров", font=("Helvetica", 16))
         title_label.pack(pady=10)
 
-        # Поля для ввода данных о продукте
+        # Поля для ввода информации о продукте
         entry_frame = tk.Frame(self.master)
         entry_frame.pack(pady=10)
 
@@ -51,9 +54,19 @@ class ProductUI:
         add_button = tk.Button(button_frame, text="Добавить продукт", command=self.add_product)
         add_button.pack(side=tk.LEFT, padx=5)
 
-        delete_button = tk.Button(button_frame,text="Удалить товар", command=self.delete_product)
-        delete_button.pack(side=tk.LEFT, padx=5)
+        view_button = tk.Button(button_frame, text="Просмотреть продукты", command=self.view_products)
+        view_button.pack(side=tk.LEFT, padx=5)
         
+        delete_button = tk.Button(button_frame, text="Удалить продукт", command=self.delete_product)
+        delete_button.pack(side=tk.LEFT, padx=5)
+
+        # Список продуктов
+        self.product_list = ttk.Treeview(self.master, columns=('Name', 'Price', 'Description'), show='headings')
+        self.product_list.heading('Name', text='Название')
+        self.product_list.heading('Price', text='Цена')
+        self.product_list.heading('Description', text='Описание')
+        self.product_list.pack(pady=10)
+
     def add_product(self):
         name = self.name_entry.get()
         price = self.price_entry.get()
@@ -64,55 +77,25 @@ class ProductUI:
                 price = float(price)
                 product = Product(name, price, description)
                 self.catalog.add_product(product)
-
+                
                 # Очищаем поля ввода после добавления
                 self.name_entry.delete(0, tk.END)
                 self.price_entry.delete(0, tk.END)
                 self.desc_entry.delete(0, tk.END)
-
+                
                 messagebox.showinfo("Успех", "Продукт добавлен!")
             except ValueError:
                 messagebox.showwarning("Ошибка", "Цена должна быть числом!")
         else:
             messagebox.showwarning("Ошибка", "Заполните все поля!")
 
-    def delete_product(self):
-        try:
-            selected_item = self.product_list.selection()[0]  # Получаем выбранный элемент
-            self.product_list.delete(selected_item)  # Удаляем из списка
-            index = self.product_list.index(selected_item)  # Получаем индекс выбранного элемента
-            del self.catalog.products[index]  # Удаляем из каталога
-        except IndexError:
-            messagebox.showwarning("Внимание", "Пожалуйста, выберите продукт для удаления.")
-
-class MainApp:
-    def __init__(self):
-        self.window = tk. Tk()
-        self.window.title("Каталог товаров")
-        self.ui = ProductUI(self.window)
-
-        # Создаем элементы для отображения списка продуктов
-        self.create_product_list()
-
-    def create_product_list(self):
-        # Список продуктов
-        self.product_list = ttk.Treeview(self.window, columns=('Name', 'Price', 'Description'), show='headings')
-        self.product_list.heading('Name', text='Название')
-        self.product_list.heading('Price', text='Цена')
-        self.product_list.heading('Description', text='Описание')
-        self.product_list.pack(pady=10)
-
-        # Кнопка для обновления списка
-        view_button = tk.Button(self.window, text="Просмотреть продукты", command=self.view_product)
-        view_button.pack(pady=10)
-
-    def view_product(self):
+    def view_products(self):
         # Очищаем текущий список
-        for row  in self.product_list.get_children():
+        for row in self.product_list.get_children():
             self.product_list.delete(row)
-
+        
         # Получаем все продукты и добавляем их в таблицу
-        for product in self.ui.catalog.get_all_products():
+        for product in self.catalog.get_all_products():
             self.product_list.insert("", "end", values=(product.name, product.price, product.description))
 
     def delete_product(self):
@@ -124,7 +107,15 @@ class MainApp:
         except IndexError:
             messagebox.showwarning("Внимание", "Пожалуйста, выберите продукт для удаления.")
 
-__name__ == "__main__"
-main_app = MainApp()
-main_app.window.mainloop()
-            
+class App:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Каталог товаров")
+        self.ui = ProductUI(self.window)
+
+    def run(self):
+        self.window.mainloop()
+
+if __name__ == "__main__":
+    app = App()
+    app.run()
